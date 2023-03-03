@@ -3,8 +3,10 @@ import { TasksService } from './tasks.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Task } from './task.entity';
-import { mockCreateTaskDto, mockTask } from './tasks.mock';
+import { mockCreateTaskDto, mockTask } from './mock';
 import { TaskResponseDto } from './dto/response';
+import { RmqService } from '@app/common';
+import { ConfigService } from '@nestjs/config';
 
 jest.mock('./tasks.service');
 
@@ -22,6 +24,8 @@ describe('TasksController', () => {
       controllers: [TasksController],
       providers: [
         TasksService,
+        RmqService,
+        ConfigService,
         {
           provide: getRepositoryToken(Task),
           useValue: [find, insert],
@@ -39,10 +43,7 @@ describe('TasksController', () => {
 
   describe('create()', () => {
     it('should call TasksService and create task with correct values', async () => {
-      const createSpy = jest.spyOn(service, 'create');
-
       const mockTask = mockCreateTaskDto();
-
       await controller.create(mockTask);
 
       expect(service.create).toHaveBeenCalledWith(mockTask);

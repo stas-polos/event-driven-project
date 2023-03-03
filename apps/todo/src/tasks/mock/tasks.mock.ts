@@ -1,5 +1,5 @@
-import { Task } from './task.entity';
-import { TaskCreateDto } from './dto/request';
+import { Task } from '../task.entity';
+import { TaskCreateDto } from '../dto/request';
 
 export const mockCreateTaskDto = (): TaskCreateDto => ({
   title: 'anyTitle',
