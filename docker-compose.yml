@@ -1,27 +1,49 @@
 services:
-  api:
+  todo:
     build:
       context: .
-      dockerfile: ./src/Dockerfile
+      dockerfile: ./apps/todo/Dockerfile
       target: development
     command: >
-      sh -c "npm run migration:run 
-      && npm run start:dev"
+      sh -c "npm run migration:run:todo 
+      && npm run start:dev todo"
     env_file:
-      - .env
+      - ./apps/todo/.env
     depends_on:
       - postgres-db
       - rabbitmq
     volumes:
-      - .:/usr/src
-      - /usr/src/node_modules
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
-      - '${PORT}:${PORT}'
+      - '3000:3000'
+  logging:
+    build:
+      context: .
+      dockerfile: ./apps/logging/Dockerfile
+      target: development
+    command: >
+      sh -c "npm run migration:run:logging
+      && npm run start:dev logging"
+    env_file:
+      - ./apps/logging/.env
+    depends_on:
+      - mysql-db
+      - rabbitmq
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3001:3001'
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:3.10.7-management
     hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_PASS=root
+      - RABBITMQ_DEFAULT_USER=guest
     ports:
       - '5672:5672'
+      - '15672:15672'
   postgres-db:
     image: postgres:latest
     hostname: docker-postgres
@@ -31,3 +53,13 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
+  mysql-db:
+    image: mysql:latest
+    hostname: docker-mysql
+    environment:
+      - MYSQL_DATABASE=todolog
+      - MYSQL_USER=mysql
+      - MYSQL_PASSWORD=mysql
+      - MYSQL_ROOT_PASSWORD=mysql
+    ports:
+      - '3306:3306'
