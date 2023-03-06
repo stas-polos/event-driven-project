@@ -6,6 +6,18 @@ import { mockCreateTaskDto, mockTask, clientProxyFactoryMock } from './mock';
 import { TaskResponseDto } from './dto/response';
 import { LOGS_CONSUMER } from '../todo.constants';
 
+jest.mock('rxjs', () => {
+  const original = jest.requireActual('rxjs');
+
+  return {
+    ...original,
+    lastValueFrom: () =>
+      new Promise((resolve, reject) => {
+        resolve(true);
+      }),
+  };
+});
+
 describe('TasksService', () => {
   let tasksService: TasksService;
   let find: jest.Mock;
