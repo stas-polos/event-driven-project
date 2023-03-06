@@ -15,6 +15,7 @@ const DB_TYPE = ['mysql', 'postgres'];
 export const validationSchema = Joi.object({
   PORT: Joi.number().default(false),
   HOST: Joi.string().default('localhost'),
+  NEST_DEBUG: Joi.boolean().required(),
 
   DB_TYPE: Joi.string()
     .required()
