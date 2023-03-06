@@ -1,6 +1,6 @@
 import { RmqModuleOptions } from './interfaces';
 import { DynamicModule, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { RmqService } from './rmq.service';
 
@@ -18,7 +18,6 @@ export class RmqModule {
     return {
       module: RmqModule,
       imports: [
-        ConfigModule,
         ClientsModule.registerAsync([
           {
             name,
